@@ -9,19 +9,14 @@
 
 #define GRIDSIZE 10 //size of an individual grid square
 #define MAPSIZE 100 //size of map square in grids
+#define MINMAPLENGTH 150
 /*
 Values that work best so far
 noise percent 40
 generations 10
 threshold 4
+minmaplength 150
 */
-//#define NOISE_PERCENT 40 //initial percentage of walls to room tiles
-//#define LIFE_GENERATIONS 10 //number of times life algorithm will be applied to noise
-//#define LIFE_THRESHOLD 4 //number of live cells required to live
-
-//IDEA - pick a starting point near corner of map,
-//then pick end point as the furthest away
-//set a minimum path requirement and regenerate if it is under that limit
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -50,7 +45,11 @@ private:
     int generations;
     int num_alive_to_live;
     int overpopulation;
+	int maxPath;
 	QGraphicsRectItem* tiles[MAPSIZE][MAPSIZE];
+
+signals:
+	void mapUpdated();
 
 private slots:
     void updateNoise(int);
@@ -60,5 +59,6 @@ private slots:
     void generateNew();
 	void updateCells();
 	int valueOfLowestNeighbor(int, int);
+	void updateMapLength();
 };
 #endif // MAINWINDOW_H

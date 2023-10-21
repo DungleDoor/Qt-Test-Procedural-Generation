@@ -34,10 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->generateBtn, &QPushButton::clicked, this, &MainWindow::generateNew);
 
-	generateNoise();
-    gameOfLife();
-	updateCells();
-    drawTiles();
+	connect(this, &MainWindow::mapUpdated, this, &MainWindow::updateMapLength);
+
+	generateNew();
 }
 
 MainWindow::~MainWindow()
@@ -87,6 +86,10 @@ void MainWindow::drawTiles()
 					tiles[i][j]->setBrush(Qt::red);
 					tiles[i][j]->setPen(QPen(Qt::transparent));
 				break;
+				case 4:
+					tiles[i][j]->setBrush(Qt::blue);
+					tiles[i][j]->setPen(QPen(Qt::transparent));
+				break;
 			}
 		}
 	}
@@ -101,9 +104,9 @@ void MainWindow::gameOfLife()
 	3. all other live cells die and dead cells remain
 
     this is a simplified version for better generation
-    over a threshhold alive
-    below threshhold dead
-	over a threshold dead - overpopulation
+    1. over a threshhold alive
+    2. below threshhold dead
+	3. over a threshold dead - overpopulation
 	*/
 	int nextTileMap[MAPSIZE][MAPSIZE];
 	int aliveNeighbors = 0;
@@ -146,7 +149,6 @@ void MainWindow::gameOfLife()
                     nextTileMap[i][j] = 1;
                 else
                     nextTileMap[i][j] = 0;
-                //qDebug() << aliveNeighbors << " " << nextTileMap[i][j] << '\n';
 				aliveNeighbors = 0;
             }
 		}
@@ -183,10 +185,15 @@ void MainWindow::updateOverpopulation(int op)
 }
 void MainWindow::generateNew()
 {
-	generateNoise();
-    gameOfLife();
-	updateCells();
-    drawTiles();
+	maxPath = 0;
+	while(maxPath < MINMAPLENGTH)
+	{
+		generateNoise();
+		gameOfLife();
+		updateCells();
+	}
+	drawTiles();
+	emit mapUpdated();
 }
 
 void MainWindow::updateCells()
@@ -200,16 +207,24 @@ void MainWindow::updateCells()
 	draw it red later
 	*/
 	
-	//for now pick start as close to middle as possible
+	//pick start in lower left of map
 	int startX, startY;
-	startX = startY = MAPSIZE/2;
-	while(startX < MAPSIZE && tilemap[startX][startY] != 1)
+	startX = 0;
+	startY = MAPSIZE-1;
+	bool startFound = false;
+	for(int i = 0; !startFound && i < MAPSIZE/4; i++)
 	{
-		startX++;
+		for(int j = MAPSIZE-1; !startFound &&  j > 3*MAPSIZE/4; j--)
+		{
+			if(tilemap[i][j] == 1)
+			{
+				tilemap[i][j] = 2;
+				startX = i;
+				startY = j;
+				startFound = true;
+			}
+		}
 	}
-	if(startX == MAPSIZE) //if this is common i can fix later
-		return;
-	tilemap[startX][startY] = 2;
 
 	bool changesMade = true;
 	//initialize dijkstra map as more than any possible path 
@@ -240,7 +255,12 @@ void MainWindow::updateCells()
 		}
 	}
 
-	
+	//find endpoint
+	/*
+	loops through map and finds the point furthest away from starting point
+	sets that value in tilemap to 4 to be drawn blue later
+	*/
+	int endX, endY;
 	for(int i = 0; i < MAPSIZE; i++)
 	{
 		for(int j = 0; j < MAPSIZE; j++)
@@ -249,8 +269,15 @@ void MainWindow::updateCells()
 			{
 				tilemap[i][j] = 3;
 			}
+			else if(tilemap[i][j] == 1 && dijkstraMap[i][j] > maxPath)
+			{
+				maxPath = dijkstraMap[i][j];
+				endX = i;
+				endY = j;
+			}
 		}
 	}
+	tilemap[endX][endY] = 4;
 
 }
 
@@ -271,10 +298,17 @@ int MainWindow::valueOfLowestNeighbor(int x, int y)
 		values[3] = dijkstraMap[x+1][y];
 
 	int min = MAPSIZE * MAPSIZE + 1; //will always be greater
-for(int i = 0; i < 4; i++)
+ 	for(int i = 0; i < 4; i++)
 	{
 		if(values[i] < min)
 			min = values[i];
 	}
 	return min;
+}
+
+void MainWindow::updateMapLength()
+{
+	QString num;
+	num.setNum(maxPath);
+	ui->distanceLabel->setText(QString("Distance to exit: ").append(num));
 }

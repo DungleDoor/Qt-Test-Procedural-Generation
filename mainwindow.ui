@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>844</width>
-    <height>619</height>
+    <width>798</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -183,6 +183,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="distanceLabel">
+      <property name="text">
+       <string>Distance to exit: 0</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -190,7 +197,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>844</width>
+     <width>798</width>
      <height>20</height>
     </rect>
    </property>
