@@ -19,6 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
     scene->setBackgroundBrush(Qt::gray);
 	ui->graphicsView->setScene(scene);
 
+	//allocate tiles
+	for(int i = 0; i < MAPSIZE; i++)
+	{
+		for(int j = 0; j < MAPSIZE; j++)
+			tiles[i][j] = scene->addRect(i*GRIDSIZE,j*GRIDSIZE,GRIDSIZE,GRIDSIZE);
+	}
+
     //connect settings
     connect(ui->noiseSlider, SIGNAL(valueChanged(int)), this, SLOT(updateNoise(int)));
     connect(ui->generationSlider, SIGNAL(valueChanged(int)), this, SLOT(updateGenerations(int)));
@@ -62,24 +69,23 @@ void MainWindow::drawTiles()
 	{
 		for(int j = 0; j < MAPSIZE; j++)
 		{
-			QGraphicsRectItem* rect = scene->addRect(i*GRIDSIZE,j*GRIDSIZE,GRIDSIZE,GRIDSIZE);
 			switch(tilemap[i][j])
 			{
 				case 0:
-					rect->setBrush(Qt::black);
-					rect->setPen(QPen(Qt::transparent));
+					tiles[i][j]->setBrush(Qt::black);
+					tiles[i][j]->setPen(QPen(Qt::transparent));
 				break;
 				case 1:
-					rect->setBrush(Qt::white);
-					rect->setPen(QPen(Qt::transparent));
+					tiles[i][j]->setBrush(Qt::white);
+					tiles[i][j]->setPen(QPen(Qt::transparent));
 				break;
 				case 2:
-					rect->setBrush(Qt::green);
-					rect->setPen(QPen(Qt::transparent));
+					tiles[i][j]->setBrush(Qt::green);
+					tiles[i][j]->setPen(QPen(Qt::transparent));
 				break;
 				case 3:
-					rect->setBrush(Qt::red);
-					rect->setPen(QPen(Qt::transparent));
+					tiles[i][j]->setBrush(Qt::red);
+					tiles[i][j]->setPen(QPen(Qt::transparent));
 				break;
 			}
 		}

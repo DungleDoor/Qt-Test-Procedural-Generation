@@ -47,6 +47,7 @@ private:
     int generations;
     int num_alive_to_live;
     int overpopulation;
+	QGraphicsRectItem* tiles[MAPSIZE][MAPSIZE];
 
 private slots:
     void updateNoise(int);
