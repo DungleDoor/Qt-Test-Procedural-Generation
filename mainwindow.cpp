@@ -172,3 +172,8 @@ void MainWindow::generateNew()
     gameOfLife();
     drawTiles();
 }
+
+void MainWindow::updateCells()
+{
+	
+}
