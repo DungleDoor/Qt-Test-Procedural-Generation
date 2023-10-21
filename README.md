@@ -12,5 +12,6 @@ it should work, but i used a slightly different version of qt so if it doesn't j
 * there is also a minimum map distance parameter you can mess with in mainwindow.h
 
 #### Note 
-* startpoint in lower left area green, endpoint is blue 
+* startpoint is the green square
+* endpoint is the blue square
 * any unreachable areas are set to red
