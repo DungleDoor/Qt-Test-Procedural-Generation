@@ -142,8 +142,6 @@ void MainWindow::gameOfLife()
 			for(int j = 0; j < MAPSIZE; j++)
             {
                 tilemap[i][j] = nextTileMap[i][j];
-                if(tilemap[i][j] == 1)
-                    totalAlive++;
             }
 		}
 	}
@@ -174,11 +172,4 @@ void MainWindow::generateNew()
     generateNoise();
     gameOfLife();
     drawTiles();
-}
-void MainWindow::identifyCells()
-{
-    //this function should set tilemap values for start point to 2
-    //any cells that cannot be reached from start point should be set to 3
-    //in draw function draw green for start point and red for unconnected
-    //using totalAlive to minimize size of dijkstra map
 }
