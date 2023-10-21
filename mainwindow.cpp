@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	generateNoise();
     gameOfLife();
+	updateCells();
     drawTiles();
 }
 
@@ -61,17 +62,25 @@ void MainWindow::drawTiles()
 	{
 		for(int j = 0; j < MAPSIZE; j++)
 		{
-			if(tilemap[i][j] == 0)
+			QGraphicsRectItem* rect = scene->addRect(i*GRIDSIZE,j*GRIDSIZE,GRIDSIZE,GRIDSIZE);
+			switch(tilemap[i][j])
 			{
-				QGraphicsRectItem* rect = scene->addRect(i*GRIDSIZE,j*GRIDSIZE,GRIDSIZE,GRIDSIZE);
-                rect->setBrush(Qt::black);
-				rect->setPen(QPen(Qt::transparent));
-			}
-            else
-			{
-				QGraphicsRectItem* rect = scene->addRect(i*GRIDSIZE,j*GRIDSIZE,GRIDSIZE,GRIDSIZE);
-                rect->setBrush(Qt::white);
-				rect->setPen(QPen(Qt::transparent));
+				case 0:
+					rect->setBrush(Qt::black);
+					rect->setPen(QPen(Qt::transparent));
+				break;
+				case 1:
+					rect->setBrush(Qt::white);
+					rect->setPen(QPen(Qt::transparent));
+				break;
+				case 2:
+					rect->setBrush(Qt::green);
+					rect->setPen(QPen(Qt::transparent));
+				break;
+				case 3:
+					rect->setBrush(Qt::red);
+					rect->setPen(QPen(Qt::transparent));
+				break;
 			}
 		}
 	}
@@ -168,12 +177,98 @@ void MainWindow::updateOverpopulation(int op)
 }
 void MainWindow::generateNew()
 {
-    generateNoise();
+	generateNoise();
     gameOfLife();
+	updateCells();
     drawTiles();
 }
 
 void MainWindow::updateCells()
 {
+	/*
+	for this function:
+	pick a start grid square
+	set its value to 2 in tilemap to be drawn green later
+	create a dijkstra map from the start point
+	if the tile is unreachable after the map is created, set value to 3
+	draw it red later
+	*/
 	
+	//for now pick start as close to middle as possible
+	int startX, startY;
+	startX = startY = MAPSIZE/2;
+	while(startX < MAPSIZE && tilemap[startX][startY] != 1)
+	{
+		startX++;
+	}
+	if(startX == MAPSIZE) //if this is common i can fix later
+		return;
+	tilemap[startX][startY] = 2;
+
+	bool changesMade = true;
+	//initialize dijkstra map as more than any possible path 
+	for(int i = 0; i < MAPSIZE; i++)
+	{
+		for(int j = 0; j < MAPSIZE; j++)
+		{
+			dijkstraMap[i][j] = MAPSIZE * MAPSIZE;
+		}
+	}
+	//set start square as 0 - origin of where we measure distance from
+	dijkstraMap[startX][startY] = 0;
+
+	//probably a better way to do this
+	while(changesMade)
+	{
+		changesMade = false;
+		for(int i = 0; i < MAPSIZE; i++)
+		{
+			for(int j = 0; j < MAPSIZE; j++)
+			{
+				if(tilemap[i][j] == 1 && dijkstraMap[i][j] > valueOfLowestNeighbor(i,j) + 1)
+				{
+					dijkstraMap[i][j] = valueOfLowestNeighbor(i,j) + 1;
+					changesMade = true;
+				}
+			}
+		}
+	}
+
+	
+	for(int i = 0; i < MAPSIZE; i++)
+	{
+		for(int j = 0; j < MAPSIZE; j++)
+		{
+			if(tilemap[i][j] == 1 && dijkstraMap[i][j] == MAPSIZE*MAPSIZE)
+			{
+				tilemap[i][j] = 3;
+			}
+		}
+	}
+
+}
+
+int MainWindow::valueOfLowestNeighbor(int x, int y)
+{
+	int values[] = {MAPSIZE*MAPSIZE, MAPSIZE*MAPSIZE, MAPSIZE*MAPSIZE, MAPSIZE*MAPSIZE};
+	//top
+	if(y != 0)
+		values[0] = dijkstraMap[x][y-1];
+	//bottom
+	if(y != MAPSIZE-1)
+		values[1] = dijkstraMap[x][y+1];
+	//left
+	if(x != 0)
+		values[2] = dijkstraMap[x-1][y];
+	//right
+	if(x != MAPSIZE-1)
+		values[3] = dijkstraMap[x+1][y];
+
+	int min = MAPSIZE * MAPSIZE + 1; //will always be greater
+for(int i = 0; i < 4; i++)
+	{
+		if(values[i] < min)
+			min = values[i];
+	}
+	return min;
 }

@@ -36,6 +36,7 @@ private:
     Ui::MainWindow *ui;
 
 	int tilemap[MAPSIZE][MAPSIZE]; //stores map tiles as a 0 for wall and 1 for room
+	int dijkstraMap[MAPSIZE][MAPSIZE];
 	void generateNoise();
 	void drawTiles();
 	void gameOfLife();
@@ -54,5 +55,6 @@ private slots:
     void updateOverpopulation(int);
     void generateNew();
 	void updateCells();
+	int valueOfLowestNeighbor(int, int);
 };
 #endif // MAINWINDOW_H
