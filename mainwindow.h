@@ -19,6 +19,9 @@ threshold 4
 //#define LIFE_GENERATIONS 10 //number of times life algorithm will be applied to noise
 //#define LIFE_THRESHOLD 4 //number of live cells required to live
 
+//IDEA - pick a starting point near corner of map,
+//then pick end point as the furthest away
+//set a minimum path requirement and regenerate if it is under that limit
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
