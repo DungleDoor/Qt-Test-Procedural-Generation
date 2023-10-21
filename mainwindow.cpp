@@ -136,7 +136,6 @@ void MainWindow::gameOfLife()
             }
 		}
 		//assign new tilemap
-        totalAlive = 0;
 		for(int i = 0; i < MAPSIZE; i++)
 		{
 			for(int j = 0; j < MAPSIZE; j++)
