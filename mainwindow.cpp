@@ -80,14 +80,15 @@ void MainWindow::drawTiles()
 void MainWindow::gameOfLife()
 {
 	/*
+	game of life -
 	1. live cells with 2 or 3 neighbors survives
 	2. dead cell with 3 live neightbours becomes alive
 	3. all other live cells die and dead cells remain
 
-    simplified version for better generation
+    this is a simplified version for better generation
     over a threshhold alive
     below threshhold dead
-	essentially no overpopulation
+	over a threshold dead - overpopulation
 	*/
 	int nextTileMap[MAPSIZE][MAPSIZE];
 	int aliveNeighbors = 0;
@@ -135,10 +136,15 @@ void MainWindow::gameOfLife()
             }
 		}
 		//assign new tilemap
+        totalAlive = 0;
 		for(int i = 0; i < MAPSIZE; i++)
 		{
 			for(int j = 0; j < MAPSIZE; j++)
-				tilemap[i][j] = nextTileMap[i][j];
+            {
+                tilemap[i][j] = nextTileMap[i][j];
+                if(tilemap[i][j] == 1)
+                    totalAlive++;
+            }
 		}
 	}
 }
@@ -168,4 +174,11 @@ void MainWindow::generateNew()
     generateNoise();
     gameOfLife();
     drawTiles();
+}
+void MainWindow::identifyCells()
+{
+    //this function should set tilemap values for start point to 2
+    //any cells that cannot be reached from start point should be set to 3
+    //in draw function draw green for start point and red for unconnected
+    //using totalAlive to minimize size of dijkstra map
 }

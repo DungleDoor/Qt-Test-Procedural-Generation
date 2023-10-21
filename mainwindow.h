@@ -53,7 +53,5 @@ private slots:
     void updateNumAliveThreshold(int);
     void updateOverpopulation(int);
     void generateNew();
-
-
 };
 #endif // MAINWINDOW_H
