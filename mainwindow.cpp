@@ -186,11 +186,13 @@ void MainWindow::updateOverpopulation(int op)
 void MainWindow::generateNew()
 {
 	maxPath = 0;
-	while(maxPath < MINMAPLENGTH)
+	int numAttempts = 0;
+	while(maxPath < MINMAPLENGTH && numAttempts < MAXMAPATTEMPTS)
 	{
 		generateNoise();
 		gameOfLife();
 		updateCells();
+		numAttempts++;
 	}
 	drawTiles();
 	emit mapUpdated();
