@@ -8,6 +8,7 @@ it should work, but i used a slightly different version of qt so if it doesn't j
 * Noise Percentage - initial percent of cells that are alive (white) <br />
 * Generations - # of generations rules are applied, set to 0 to see initial noise pattern <br />
 * The last two define the two rules that are applied to generate map, should be pretty self explanatory, overpopulation is set to 9 because there can never be more than 8 alive neighbors <br />
+* you can play with the size of each square and total map size in mainwindow.h, it shouldn't break anything
 
 ### New Features
 * picks a central starting point in green and highlights any unreachable areas in red
